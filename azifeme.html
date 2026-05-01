@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AZIFEME Store</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/logo.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body{font-family:'Poppins',sans-serif;margin:0;background:#fafafa}
+    header{background:linear-gradient(90deg,#f57c00,#ff9800);color:#fff;padding:20px;text-align:center}
+    nav{background:#222;padding:12px;text-align:center}
+    nav a{color:#fff;margin:0 15px;text-decoration:none}
+    .hero{padding:50px;text-align:center;background:#fff3e0}
+    .btn{background:#ff9800;color:#fff;padding:10px 20px;border:none;border-radius:25px;cursor:pointer}
+    .products{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;padding:30px}
+    .card{background:#fff;border-radius:12px;padding:15px;width:220px;box-shadow:0 4px 10px rgba(0,0,0,0.1);text-align:center}
+    .card img{width:100%;border-radius:10px}
+    .logo-small{width:40px;margin-bottom:10px}
+    .cart{position:fixed;right:20px;top:20px;background:#4caf50;color:#fff;padding:10px 15px;border-radius:20px}
+    .cart-box{position:fixed;right:20px;top:70px;background:#fff;width:300px;max-height:400px;overflow:auto;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.2);padding:15px;display:none}
+    footer{background:#222;color:#fff;text-align:center;padding:15px}
+    .footer-logo{width:60px;margin-bottom:10px}
+  </style>
+</head>
+<nav>
+  <a href="azifeme.html">Home</a>
+  <a href="#products">Products</a>
+  <a href="aziforms.html">Enquiry</a>
+</nav>
+<body>
+
+<header style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+  <img src="images/logo.png" alt="AZIFEME Logo" style="width:90px;height:auto;border-radius:10px;" />
+  <h1 style="margin:0;">AZIFEME STORE</h1>
+  <p style="margin:0;">Authentic Groundnut. Always.</p>
+</header>
+
+<div class="cart" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</div>
+<div class="cart-box" id="cart-box">
+  <h3>Your Order</h3>
+  <ul id="cart-items"></ul>
+  <p><strong>Total: GH₵ <span id="total">0</span></strong></p>
+  <button class="btn" onclick="checkout()">Checkout (WhatsApp)</button>
+</div>
+
+<section class="hero">
+  <h2>100% Natural Groundnut Paste</h2>
+  <p>No additives • No preservatives • Nationwide delivery</p>
+</section>
+
+<section class="products">
+  <div class="card">
+    <img src="images/logo.png" class="logo-small" />
+    <img src="https://via.placeholder.com/200" />
+    <h3>250g</h3>
+    <p>GH₵20</p>
+    <button class="btn" onclick="addToCart('250g',20)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="images/logo.png" class="logo-small" />
+    <img src="https://via.placeholder.com/200" />
+    <h3>500g</h3>
+    <p>GH₵35</p>
+    <button class="btn" onclick="addToCart('500g',35)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="images/logo.png" class="logo-small" />
+    <img src="https://via.placeholder.com/200" />
+    <h3>1kg</h3>
+    <p>GH₵60</p>
+    <button class="btn" onclick="addToCart('1kg',60)">Add to Cart</button>
+  </div>
+  <div class="card">
+    <img src="images/logo.png" class="logo-small" />
+    <img src="https://via.placeholder.com/200" />
+    <h3>2kg</h3>
+    <p>GH₵110</p>
+    <button class="btn" onclick="addToCart('2kg',110)">Add to Cart</button>
+  </div>
+</section>
+
+<footer>
+  <img src="images/logo.png" class="footer-logo" />
+  <p>📞 +233 559 538 947 | @azifeme</p>
+  <p>Thank you for choosing AZIFEME</p>
+</footer>
+
+<script>
+let cart = [];
+
+function addToCart(name, price){
+  const existing = cart.find(item => item.name === name);
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({name, price, qty: 1});
+  }
+  updateCart();
+}
+
+function updateCart(){
+  let list = document.getElementById('cart-items');
+  let total = 0;
+  list.innerHTML = '';
+
+  cart.forEach((item, index) => {
+    total += item.price * item.qty;
+
+    let li = document.createElement('li');
+    li.innerHTML = `
+      ${item.name} - GH₵${item.price} x ${item.qty}
+      <button onclick="decreaseQty(${index})">➖</button>
+      <button onclick="increaseQty(${index})">➕</button>
+      <button onclick="removeItem(${index})" style="color:red;">❌</button>
+    `;
+    list.appendChild(li);
+  });
+
+  document.getElementById('total').innerText = total;
+  document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function increaseQty(index){
+  cart[index].qty += 1;
+  updateCart();
+}
+
+function decreaseQty(index){
+  if(cart[index].qty > 1){
+    cart[index].qty -= 1;
+  } else {
+    cart.splice(index, 1);
+  }
+  updateCart();
+}
+
+function removeItem(index){
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function toggleCart(){
+  let box = document.getElementById('cart-box');
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+function checkout(){
+  let message = 'Hello, I want to order:%0A';
+  cart.forEach(item => {
+    message += `${item.name} x ${item.qty} - GH₵${item.price * item.qty}%0A`;
+  });
+
+  let total = document.getElementById('total').innerText;
+  message += 'Total: GH₵' + total;
+
+  window.open('https://wa.me/233559538947?text=' + message, '_blank');
+}
+</script>
+
+</html>
